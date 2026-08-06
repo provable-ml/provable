@@ -1,0 +1,90 @@
+{
+ "action": {
+  "atoms_removed": 299,
+  "gates": {
+   "grid_probe_max": 0.001,
+   "stock_diff_off": 0.0,
+   "structural_residual": 0.0001
+  },
+  "grid_probe_max": 3.2186508178710938e-06,
+  "holdout_delta": 0.11803690957143771,
+  "holdout_delta_ci": 0.01523733226128426,
+  "holdout_mse_after": 0.18785216625460494,
+  "holdout_mse_before": 0.06981525668316722,
+  "holdout_pred_change_ci": 0.01287952859747579,
+  "holdout_pred_change_mass": 0.11961079196758428,
+  "mode": "excise",
+  "model_out": "model_v2.json",
+  "model_out_sha256": "0815b0a1535103a9d72e24d7e34faabe88241ee9cf8e0d6e8dd0889bf1b6fcd7",
+  "stock_diff_off": 0.0,
+  "stock_diff_on": 1.8818212841331672e-06,
+  "structural_residual": 6.199999999512151e-09,
+  "trees_appended": 299
+ },
+ "certificate_id": "PV-04350CAA899E86BD",
+ "created_utc": "2026-07-30T06:12:36+00:00",
+ "environment": {
+  "numpy": "2.4.4",
+  "provable": "0.1.0",
+  "python": "3.12.3",
+  "xgboost": "3.3.0"
+ },
+ "findings": [
+  {
+   "clause": "between(age, group_A)",
+   "data_mass": 0.11314908279297169,
+   "n_atoms": 299,
+   "profile_top": [
+    "age>=46.166 (|c| 0.977)",
+    "group_A>=1 (|c| 6.96)"
+   ],
+   "share_of_var": 0.2770463760576265
+  }
+ ],
+ "limits": [
+  "Scope is the model artifact, not the world: certified absence of named rule families in the file at the stated hash.",
+  "No proxy claim: other features may jointly reconstruct a protected attribute; this instrument does not test that here.",
+  "No causal claim: prices are model-behavior quantities, not effects of interventions on the world.",
+  "No off-distribution claim: behavior is characterized at the artifact's own thresholds and probed contexts.",
+  "Missing-value routing of ORIGINAL trees is not modeled by the transported spectrum; appended trees route NaN to the fail leaf. Audit assumes NaN-free inputs (R-07 declared)."
+ ],
+ "model": {
+  "n_atoms": 4676,
+  "n_trees": 200,
+  "path": "model.json",
+  "sha256": "a43fee630a36e546fdf4526e5099fecfca7ba5ee7e914c40961492031c3c7c91"
+ },
+ "policy": {
+  "forbid": [
+   {
+    "features": [
+     "age",
+     "group_A"
+    ],
+    "kind": "between"
+   }
+  ],
+  "name": "fair_lending_demo",
+  "sha256": "2003701224c4b5afacd05b8259ffbca540392b381e89e2b0c7cdedb55e019bf1",
+  "tolerance": 0.0
+ },
+ "predicted_vs_observed": [
+  {
+   "observed": 0.11961079196758428,
+   "predicted": 0.11314908279297169,
+   "quantity": "excision price: train-sample mass vs realized holdout mean squared change",
+   "status": "within 25%"
+  }
+ ],
+ "refusals": [],
+ "schema": "provable/evidence/v0.1",
+ "verb": "enforce",
+ "verdict": {
+  "certified_absent": [
+   "age \u00d7 group_A"
+  ],
+  "establishes": "exact removal of the named rule families from the artifact, priced, with a still-native output file",
+  "state": "PASS",
+  "statement": "This artifact contains no rules combining age \u00d7 group_A, at any threshold the artifact can express. Verified structurally and behaviorally; independently re-checkable."
+ }
+}

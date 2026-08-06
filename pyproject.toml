@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "provable"
+version = "0.9.0"
+description = "Exact audit, surgery, and certified discovery for tree ensembles"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.10"
+dependencies = ["numpy", "pandas", "scipy", "scikit-learn", "statsmodels", "xgboost>=2.0", "tabulate", "plotly", "qrcode"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Science/Research",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Scientific/Engineering :: Artificial Intelligence",
+  "Operating System :: OS Independent",
+]
+
+[project.urls]
+Homepage = "https://provable.ml"
+Documentation = "https://provable.ml"
+Repository = "https://github.com/provable-ml/provable"
+
+[tool.setuptools.packages.find]
+where = ["src"]

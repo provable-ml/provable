@@ -1,0 +1,5 @@
+Verify without trusting this dossier:
+  python -m provable_verify evidence.json model_v2.json
+Re-checks: bundle hash = certificate id; model hash; policy hash; structural probe
+(own transport re-derivation); behavioral probe (own tree-walk predictor, data-free
+grid-corner contexts); verdict support; limits panel presence.
