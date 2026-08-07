@@ -1,0 +1,75 @@
+site_name: provable
+site_url: https://provable.ml/
+site_description: >-
+  provable: exact audit, surgery, and certified discovery for tree ensembles.
+  Read, price, and cut the AND-rules of a tree ensemble, in closed form, with
+  certificates an independent checker can re-verify.
+copyright: '&copy; 2026 Oussama Souihli, Dr. Eng. &middot; independent research &middot; released under the <a href="https://github.com/provable-ml/provable/blob/main/LICENSE">MIT License</a>'
+
+theme:
+  name: material
+  language: en
+  favicon: assets/favicon.svg
+  logo: assets/favicon.svg
+  font:
+    text: STIX Two Text
+    code: IBM Plex Mono
+  palette:
+    scheme: default
+    primary: custom
+    accent: custom
+  features:
+    - navigation.tabs
+    - navigation.top
+    - navigation.footer
+    - toc.follow
+    - content.code.copy
+    - search.suggest
+    - search.highlight
+
+nav:
+  - Start here: index.md
+  - Scenarios:
+      - 'A1 · What is this model actually using?': scenarios/a1-read.md
+      - 'A2 · Prove it never combines age with group': scenarios/a2-audit.md
+      - 'A3 · Remove the rules without retraining': scenarios/a3-cut.md
+      - 'A4 · Let someone else check, trustlessly': scenarios/a4-verify.md
+      - 'A→B · In the model, or in the world?': scenarios/bridge.md
+      - 'B1 · 300 columns screened; which survive?': scenarios/b1-claims.md
+      - 'B2 · The truth your vocabulary cannot say': scenarios/b2-vocab.md
+      - 'B3 · It came back empty. Now what?': scenarios/b3-refusal.md
+      - 'B4 · How much is the model not seeing?': scenarios/b4-darkmass.md
+  - Glossary: glossary.md
+  - Manual:
+      - Install: manual/install.md
+      - Verdicts & refusal codes: manual/verdicts.md
+      - 'What "exact" means': manual/exact.md
+      - 'The sieve: parameters & vocabulary': manual/sieve.md
+      - Data contracts: manual/contracts.md
+      - Tests & guarantees: manual/tests.md
+      - Road to 1.0.0: manual/roadmap.md
+  - About: about.md
+  - Cite: cite.md
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - footnotes
+  - tables
+  - toc:
+      permalink: '¶'
+  - pymdownx.details
+  - pymdownx.highlight:
+      anchor_linenums: false
+  - pymdownx.inlinehilite
+  - pymdownx.superfences
+
+extra_css:
+  - stylesheets/extra.css
+
+plugins:
+  - search
+
+extra:
+  generator: false

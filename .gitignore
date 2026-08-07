@@ -13,3 +13,6 @@ tests/model*.json
 tests/evidence_tampered.json
 tests/dossier_audit/
 tests/dossier_enforce/
+
+# mkdocs build output
+site/
