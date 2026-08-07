@@ -20,7 +20,8 @@ def load(path=None, booster=None, max_atoms=2_000_000):
 
 
 def _env():
-    return {'xgboost': xgboost.__version__, 'numpy': np.__version__, 'python': platform.python_version(), 'provable': '0.1.0'}
+    from . import __version__
+    return {'xgboost': xgboost.__version__, 'numpy': np.__version__, 'python': platform.python_version(), 'provable': __version__}
 
 
 def _families(spec, policy):

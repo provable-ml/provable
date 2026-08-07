@@ -354,7 +354,7 @@ dossier_demo/                  a real enforce dossier: evidence.json, certificat
 
 @misc{souihli2026metrology,
   author = {Souihli, Oussama},
-  title  = {Dark-Mass Metrology: A Certified Learner's Account of Its Own Ignorance},
+  title  = {Dark-Mass Metrology: Pricing What a Certified Model Does Not Know},
   year   = {2026},
   doi    = {10.5281/zenodo.21819925}
 }

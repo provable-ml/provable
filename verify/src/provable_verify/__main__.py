@@ -13,6 +13,8 @@ probes. Checks (attested in output):
   7  limits panel present and non-empty
 Usage: python -m provable_verify evidence.json model.json
 """
+__version__ = '0.9.0'
+
 import sys
 import json
 import hashlib
@@ -144,7 +146,7 @@ def main(bundle_path, model_path):
     checks.append(('6 verdict supported by own probes', supported if is_enforce else True))
     checks.append(('7 limits panel present', bool(b.get('limits'))))
     ok = all(p for _, p in checks)
-    print('provable-verify v0.1.0 (independent; numpy+stdlib; shares no code with provable)')
+    print(f'provable-verify v{__version__} (independent; numpy+stdlib; shares no code with provable)')
     for name, p in checks: print(f"  [{'PASS' if p else 'FAIL'}] {name}")
     print(f"  measured: structural={struct:.3e}  probe={probe:.3e}")
     print('VERIFICATION: ' + ('PASS' if ok else 'FAIL'))
