@@ -12,6 +12,6 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-      - run: pip install -e . -e ./verify
+      - run: pip install -e . -e ./verify pytest
       - run: python -m pytest -q
       - run: python tests/selftest.py | tee selftest.out && grep -q "17/17 PASS" selftest.out
