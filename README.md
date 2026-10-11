@@ -1,6 +1,6 @@
 # provable
 
-Exact audit, surgery, and certified discovery for tree ensembles.
+Exact audit, surgery, certified discovery, and the certificate layer for tree ensembles.
 
 `provable` treats a fitted model as an auditable artifact. On xgboost models it reads an
 **exact** itemization of every rule the model uses (the transported atom spectrum),
@@ -11,10 +11,16 @@ verifier that shares no code with the engine. On raw data it runs the certified-
 sieve: an FDR-controlled claims ledger, a dark-mass ledger, and the right to refuse
 (k = 0 is a verdict, not an error).
 
-- **Tests that ship with the code:** 35 pytest tests, the 17-item acceptance ledger (`tests/selftest.py`, T1-T7), and a verifier mutation battery.
-- **Independent verification:** every certificate is re-checked by `provable-verify` - numpy + stdlib only, zero shared code with the engine, machine-enforced in CI.
-- **Reproducibility:** the archived DOI version of this package (10.5281/zenodo.21819947) reproduces every number in the papers.
-- **Version 0.9.0.** It becomes **1.0.0 when the evidence-bundle schema and the `enforce` API freeze.**
+The certificate layer keeps a book of what was certified, on which rows, at what price. Its
+mediated holdout seals rows into custody and answers questions about them one at a time,
+each answer priced in bits by the holdout's own log, so a certificate taken after looking
+still holds at its stated level. A watch follows deployed rows against a certified level,
+and a route screens a choice on the training rows before it reaches the holdout.
+
+- **Tests that ship with the code:** 242 pytest tests, among them the 173 locks of the certificate layer, the 17-item acceptance ledger (`tests/selftest.py`, T1-T7), and a verifier mutation battery.
+- **Independent verification:** every audit and enforce certificate is re-checked by `provable-verify` - numpy + stdlib only, zero shared code with the engine, machine-enforced in CI. A holdout's certificates are recomputed from its book by `audit`.
+- **Reproducibility:** the archived version 0.9.0 of this package (DOI 10.5281/zenodo.21819947) reproduces every number in the papers.
+- **Version 0.12**, the first release on PyPI since 0.9.0 (0.10 and 0.11 were development milestones). The 0.9.0 verification surface is frozen inside it; it adds the certificate layer (Scenarios C1-C23 in the documentation). It becomes **1.0.0 when the evidence-bundle schema and the public API freeze** (see Road to 1.0.0).
 
 ```
             ┌─ WORKFLOW A: audit a model ────────────────────────────────────────┐
@@ -30,11 +36,17 @@ X, y ───────► discover (certified sieve) ─► FDR claims ledge
             │ predictor · toll/penumbra diagnostics · dark-mass ledger ·         │
             │ phase verdict (I / II-a / II-b / III) · or refusal at k = 0        │
             └────────────────────────────────────────────────────────────────────┘
+            ┌─ WORKFLOW C: certify on a holdout ─────────────────────────────────┐
+holdout ────► seal ────► ask (each answer priced in bits) ─► open ─► certificate │
+            │ watch ───► deployed rows against the certified level               │
+            │ route ───► VAULT or FORWARD, screened on the training rows         │
+            └────────────────────────────────────────────────────────────────────┘
 ```
 
-The two workflows share one substrate — the **atom schema** (threshold predicates and
+Workflows A and B share one substrate — the **atom schema** (threshold predicates and
 their conjunctions) — so a violation found in a model (A) can be interrogated in the
-data (B): *is this pattern a property of your model, or of your world?*
+data (B): *is this pattern a property of your model, or of your world?* Workflow C needs
+only a model's predictions, so it takes any model.
 
 ---
 
@@ -42,7 +54,7 @@ data (B): *is this pattern a property of your model, or of your world?*
 
 | Path | Distribution | What it is | Depends on |
 |---|---|---|---|
-| `src/provable/` | `provable` | the instrument: load / spectrum / audit / enforce / discover | numpy, pandas, scipy, scikit-learn, statsmodels, xgboost ≥ 2.0, tabulate, plotly |
+| `src/provable/` | `provable` | the instrument: load / spectrum / audit / enforce / discover, and the certificate layer | numpy ≥ 1.26, pandas ≥ 2.2, scipy ≥ 1.13, scikit-learn ≥ 1.5, statsmodels ≥ 0.14, xgboost ≥ 2.0, tabulate, plotly, qrcode |
 | `verify/src/provable_verify/` | `provable-verify` | the independent checker examiners run | **numpy only** |
 
 The verifier re-implements from the xgboost JSON spec its own parser, its own
@@ -74,12 +86,13 @@ After this, `import provable` works anywhere in the venv and the verifier runs a
 `python -m provable_verify <evidence.json> <model.json>` from any directory (file
 arguments are relative to your cwd -- the demo dossier lives in `dossier_demo/`).
 
-Tested with Python 3.12, xgboost 3.3.0 (adapter write-back exercised on 3.3.0 only so
-far; needs xgboost ≥ 2.0). The verifier needs numpy only.
+Tested on Python 3.10 to 3.14: at the minimum versions (numpy 1.26.4, pandas 2.2.3, scipy
+1.13.1, scikit-learn 1.5.2, statsmodels 0.14.4) with xgboost 2.0.3, 2.1.4 and 3.0.5, and at
+current releases with xgboost 3.4. CI runs the same matrix. The verifier needs numpy only.
 
 ---
 
-## Quickstart A — audit, enforce, verify
+## Quickstart A: audit, enforce, verify
 
 ```python
 import xgboost as xgb
@@ -119,7 +132,7 @@ and the stock engine. `NaN` anywhere in `X` is a coded refusal (R-07): `audit` r
 DECLINED, `enforce` raises — the transported audit is not defined for missing-value
 routing, and the tool says so rather than guessing.
 
-## Quickstart B — certified discovery
+## Quickstart B: certified discovery
 
 ```python
 from provable import CertifiedDiscovery
@@ -135,6 +148,27 @@ p = cd.predict(X_new, model='two_tier')     # 'two_tier' | 'certified' | 'xgb'
 one-hot atoms; `NaN` makes every predicate evaluate to `False` (the engine receives NaN
 natively). If `y ⊆ {0, 1}` the run is a linear probability model: MSE/Brier primary,
 AUC also reported; predictions are not clipped to [0, 1].
+
+## Quickstart C: certify on a holdout
+
+```python
+import provable as pv
+from provable import certificates as ct
+
+S = ct.Lineage.of(ct.slice_from_frame(panel, "demo", rows=train.index))   # training rows
+H = ct.Lineage.of(ct.slice_from_frame(panel, "demo", rows=hold.index))    # holdout rows
+ho = pv.seal(hold[feats], hold["y"], "book", lineage=H,
+             baseline=train["y"].mean(), baseline_lineage=S)
+ho.ask(model, lineage=S)            # ACCEPT or REJECT, priced in bits
+cert = ho.open(model, lineage=S)    # the certificate, on the exam slice
+```
+
+**Data contract (C).** `model` is any callable from a DataFrame of features to
+predictions; `panel` carries the clock columns `start_utc` and `end_utc`, which
+`slice_from_frame` reads. The loss is squared error by default. With a declared
+`loss_range`, or a bounded loss such as Brier, the certificate is exact (the betting
+bound); without a range it uses the Gaussian bar and says so in its claim. Scenarios C14
+to C23 in the documentation walk the protocol.
 
 ---
 
@@ -258,7 +292,7 @@ whose S2 partial t's split and BH kills the whole family.
 
 ```
 python tests/test_firewall.py     # verifier imports ⊆ stdlib+numpy, zero engine imports
-python -m pytest tests/           # 35 contract + protocol + verifier-mutation tests
+python -m pytest tests/           # 242 tests: contracts, protocol, mutations, certificate layer
 python tests/selftest.py          # T1-T7 acceptance ledger (17/17)
 ```
 
@@ -268,15 +302,16 @@ python tests/selftest.py          # T1-T7 acceptance ledger (17/17)
 | `test_protocol.py` | refusal codes (R-05, coded R-07), policy canonicalization, order-free bundle hashing, any-single-field mutation breaks the certificate id, limits always present and rendered, verdict grammar closed set, sieve determinism per seed; v0.2 vocabulary: flags-off schema stability, deterministic low-side (\u2264) claim recovery with the extended dictionary |
 | `test_verifier_mutations.py` | each of the verifier's seven checks individually killed by a targeted tamper, incl. a resurrected-interaction attack with an attacker-re-hashed bundle |
 | `selftest.py` | end-to-end: external artifact → audit → enforce → stock reload → independent verify → mutation → discover → refusal |
+| `test_twin_suite.py` | the certificate layer, one lock per stated property (173 locks): lineage and the book, certify and grade, the mediated holdout and its bits, the watch, the route; each lock prints the value it measured |
 
-Deferred by design until the respective layers land: bundle-schema snapshots and
-renderer golden files (reporting layer), enforce-signature tests (refit mode), and the
-multi-version xgboost/lightgbm adapter matrix (CI env matrix).
+Deferred by design: bundle-schema snapshots and renderer golden files (reporting layer),
+and a lightgbm adapter. xgboost 2.0.3, 2.1.4, 3.0.5 and the current release run in CI, and
+lock TH1 holds the released signatures.
 
 ## Road to 1.0.0
 
 - A `schema_version` field in the evidence bundle, honored by the verifier.
-- `enforce` grows by keyword-only arguments from here; the positional surface is frozen at 0.9.0.
+- `enforce` grows by keyword-only arguments from here; the positional surface is frozen at 0.9.0 (lock TH1).
 - The deferred snapshot/golden tests above.
 - Semantic versioning from 0.9.0: breaking changes to the evidence-bundle schema or the public API happen only at a major version; 1.0.0 marks the freeze of both.
 
@@ -300,11 +335,11 @@ multi-version xgboost/lightgbm adapter matrix (CI env matrix).
   selection-optimism term (measured small); `'s2'` avoids it; both rows print.
 - **Verifier independence is a checked property,** not a promise (see Tests).
 
-## Not in 0.9.0
+## Not in this release
 
-lightgbm adapter; xgboost version matrix beyond 3.3.0; sealed PDF export (the HTML certificate binds to the same bundle); behavioral probe for `involving`
-clauses (structural only); refit surgery mode (excise only); `monitor`; vertical report
-packs; NaN-aware transported audit (R-07 declared instead).
+lightgbm adapter; sealed PDF export (the HTML certificate binds to the same bundle);
+behavioral probe for `involving` clauses (structural only); refit surgery mode (excise
+only); vertical report packs; NaN-aware transported audit (R-07 declared instead).
 
 ## Reproducibility
 
@@ -317,9 +352,15 @@ dossier ≈ 5 s; sieve on Adult (45,222 rows, P = 235, B = 8) ≈ 10 s.
 ## Files
 
 ```
-src/provable/                  adapters_xgb · calculus · policy · evidence · surface · sieve
+src/provable/                  adapters_xgb · calculus · policy · evidence · surface · sieve ·
+                               certificates/ (lineage, the book, the transcript kit) · holdout ·
+                               monitor (watch) · transport (route) · facade · inquiry · loop ·
+                               purchase/
 verify/src/provable_verify/    the independent checker (single module)
-tests/                         firewall · contracts · protocol · verifier mutations · selftest
+tests/                         firewall · contracts · protocol · verifier mutations · selftest ·
+                               the certificate layer's locks
+docs/                          the site: manual, glossary, scenarios and their demo scripts
+validation/                    simulation records behind the documentation
 dossier_demo/                  a real enforce dossier: evidence.json, certificate.md,
                                model.json, model_v2.json, MANIFEST.sha256, HOW_TO_VERIFY.txt
 ```
@@ -361,3 +402,6 @@ dossier_demo/                  a real enforce dossier: evidence.json, certificat
 ```
 
 License: MIT.
+
+
+The site under `docs/` builds with MkDocs, which is deliberately not a package dependency: `uv run --with mkdocs-material mkdocs serve` resolves the docs tooling at run time.

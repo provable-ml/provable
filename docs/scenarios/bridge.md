@@ -50,4 +50,4 @@ The FDR of the ledger, at q = 0.10, from one [selection-conditional](../glossary
 
 ---
 
-*What the papers add*: tier→truth calibration as a cross-instrument pedigree (graded on planted ground truth), and near-duplicate families as the geometry behind fragile identities: Papers 2–3, [10.5281/zenodo.21819895](https://doi.org/10.5281/zenodo.21819895), [10.5281/zenodo.21819925](https://doi.org/10.5281/zenodo.21819925).
+*What the papers add*: tier→truth calibration as a cross-instrument pedigree (graded on planted ground truth), and near-duplicate families as the geometry behind fragile identities: Papers 2–3, [SSRN 7247302](https://doi.org/10.2139/ssrn.7247302) (archived: [Zenodo 21819895](https://doi.org/10.5281/zenodo.21819895)), [10.5281/zenodo.21819925](https://doi.org/10.5281/zenodo.21819925).

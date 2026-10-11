@@ -64,4 +64,4 @@ Exact removal of the named rule families from the artifact, priced, with a still
 
 ---
 
-*What the papers add*: the appended-tree surgery theorem, the pricing identity, and the certificate-of-infeasibility construction for removal policies that can't be met on budget: Paper 1, [10.5281/zenodo.21819690](https://doi.org/10.5281/zenodo.21819690).
+*What the papers add*: the appended-tree surgery theorem, the pricing identity, and the certificate-of-infeasibility construction for removal policies that can't be met on budget: Paper 1, [SSRN 7247278](https://doi.org/10.2139/ssrn.7247278) (archived: [Zenodo 21819690](https://doi.org/10.5281/zenodo.21819690)).

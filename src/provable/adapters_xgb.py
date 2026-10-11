@@ -1,9 +1,13 @@
 """adapters_xgb.py -- native xgboost I/O for provable: load external artifacts, parse to
 leaf boxes, realize surgical edits as appended trees, save a still-valid native model.
 
-Schema target: xgboost 3.x JSON (raw_format='json'); fields mirrored from the loaded
-artifact so appended trees carry exactly the keys the host file uses. base_score is
-parsed from learner_model_param (bracketed float string) and belongs to the empty atom.
+Schema target: xgboost JSON (raw_format='json') as the running xgboost writes it; fields
+mirrored from the loaded artifact so appended trees carry exactly the keys the host file
+uses. base_score is parsed from learner_model_param and belongs to the empty atom; it is
+written back in the form the host uses, a bracketed vector under xgboost >= 3.1 and a
+plain float string before, as the float32 the model stores with 9 significant digits
+(xgboost < 3.1 reads a bracketed value, or one with more digits, as the default 0.5
+without an error).
 Missing-value policy of appended trees: default_left=1, so NaN fails the rule (house
 convention: NaN evaluates every predicate to False). Off-rule rows receive leaf 0.0,
 which leaves float predictions bit-identical.
@@ -23,10 +27,59 @@ class XGBAdapter:
         else: raise ValueError('path or booster required')
         self.raw = json.loads(bytearray(self.bst.save_raw(raw_format='json')))
         lp = self.raw['learner']['learner_model_param']
-        self.base_score = float(str(lp['base_score']).strip('[]'))
+        self.base_score_stored = float(str(lp['base_score']).strip('[]'))
+        self.objective = str(self.raw['learner'].get('objective', {}).get('name', ''))
+        self.base_score = self._stored_to_margin(self.base_score_stored)
         self.num_feature = int(lp['num_feature'])
         self.feature_names = self.raw['learner'].get('feature_names') or [f'f{i}' for i in range(self.num_feature)]
         self.version = tuple(self.raw.get('version', (0, 0, 0)))
+
+    # ------------------------------------------------------------------ link space
+    _IDENTITY_PREFIXES = ('reg:squarederror', 'reg:absoluteerror', 'reg:pseudohubererror', 'reg:quantileerror', 'reg:tweedie', 'reg:gamma', 'reg:linear', 'binary:logitraw', 'rank:', 'multi:')
+
+    def _stored_to_margin(self, b):
+        """The stored base_score of an artifact is objective-space for
+        link objectives under xgboost >= 2.0; the transported spectrum
+        lives in margin space, so the empty-atom intercept is the stored
+        value mapped through the link. Unrecognized objectives refuse
+        with code R-09 rather than transport a wrong constant."""
+        obj = self.objective
+        if obj == 'binary:logistic':
+            if tuple(self.raw.get('version', (0, 0, 0))) >= (2, 0, 0) and 0.0 < b < 1.0:
+                return float(np.log(b / (1.0 - b)))
+            return float(b)
+        if obj.startswith('count:poisson') or obj in ('reg:gamma', 'reg:tweedie'):
+            if b > 0.0: return float(np.log(b))
+            return float(b)
+        if obj == '' or any(obj.startswith(p) for p in self._IDENTITY_PREFIXES):
+            return float(b)
+        raise ValueError(f"R-09: objective '{obj}' has no registered base_score link mapping; transported constant would be wrong")
+
+    def _margin_to_stored(self, m):
+        obj = self.objective
+        if obj == 'binary:logistic':
+            if tuple(self.raw.get('version', (0, 0, 0))) >= (2, 0, 0):
+                return float(1.0 / (1.0 + np.exp(-m)))
+            return float(m)
+        if obj.startswith('count:poisson') or obj in ('reg:gamma', 'reg:tweedie'):
+            return float(np.exp(m))
+        return float(m)
+
+    def describe(self):
+        """The model in one block: task, objective, size, and the
+        link-mapped intercept."""
+        trees = self.raw['learner']['gradient_booster']['model']['trees']
+        leaves = sum(sum(1 for c in tr['left_children'] if c == -1) for tr in trees)
+        def _depth(tr):
+            L, R = tr['left_children'], tr['right_children']
+            best, stack = 0, [(0, 0)]
+            while stack:
+                nid, d = stack.pop()
+                if L[nid] == -1: best = max(best, d); continue
+                stack.append((L[nid], d + 1)); stack.append((R[nid], d + 1))
+            return best
+        used = {int(s) for tr in trees for nid, s in enumerate(tr['split_indices']) if tr['left_children'][nid] != -1}
+        return {'objective': self.objective or 'unknown', 'trees': len(trees), 'max_depth': max((_depth(tr) for tr in trees), default=0), 'leaves': leaves, 'num_feature': self.num_feature, 'features_split_on': len(used), 'features_unused': self.num_feature - len(used), 'base_score_stored': self.base_score_stored, 'base_score_margin': self.base_score, 'xgboost_artifact_version': '.'.join(str(v) for v in self.version)}
 
     # ------------------------------------------------------------------ parse
     def leaf_boxes(self):
@@ -97,7 +150,8 @@ class XGBAdapter:
         gm['gbtree_model_param']['num_trees'] = str(tid)
         if shift != 0.0:
             lp = raw['learner']['learner_model_param']
-            lp['base_score'] = f'[{float(self.base_score - shift)!r}]'
+            value = format(np.float32(self._margin_to_stored(float(self.base_score - shift))), '.9g')
+            lp['base_score'] = f'[{value}]' if str(lp['base_score']).strip().startswith('[') else value
         return raw
 
     # ------------------------------------------------------------------- io

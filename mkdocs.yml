@@ -30,7 +30,7 @@ theme:
 nav:
   - Start here: index.md
   - Scenarios:
-      - 'A1 · What is this model actually using?': scenarios/a1-read.md
+      - 'A1 · Examine: what is this model actually using?': scenarios/a1-read.md
       - 'A2 · Prove it never combines age with group': scenarios/a2-audit.md
       - 'A3 · Remove the rules without retraining': scenarios/a3-cut.md
       - 'A4 · Let someone else check, trustlessly': scenarios/a4-verify.md
@@ -39,12 +39,37 @@ nav:
       - 'B2 · The truth your vocabulary cannot say': scenarios/b2-vocab.md
       - 'B3 · It came back empty. Now what?': scenarios/b3-refusal.md
       - 'B4 · How much is the model not seeing?': scenarios/b4-darkmass.md
+      - 'C1 · From a panel to a citable claim': scenarios/c1-certify.md
+      - 'C2 · Can I use this certificate again?': scenarios/c2-reuse.md
+      - 'C3 · What does my book guarantee?': scenarios/c3-book.md
+      - 'C4 · Price what that pipeline did': scenarios/c4-lint.md
+      - 'C5 · Did it work? Grade it.': scenarios/c5-grade.md
+      - 'C6 · A public dataset, end to end': scenarios/c6-titanic.md
+      - 'C7 · The cure is a column you do not have': scenarios/c7-purchase.md
+      - 'C8 · The part your model still gets wrong': scenarios/c8-shadow.md
+      - 'C9 · Twenty questions for a missing page': scenarios/c9-characterize.md
+      - 'C10 · Screen the column before you buy it': scenarios/c10-screen.md
+      - 'C11 · Grow the shadow inside the archive': scenarios/c11-alternate.md
+      - 'C12 · Buy the column, absorb it, repeat': scenarios/c12-pursue.md
+      - 'C13 · Which columns, in which order, and when to stop': scenarios/c13-select.md
+      - 'C14 · Look at the holdout, and pay for it': scenarios/c14-seal.md
+      - 'C15 · No exam slice: certify on the rows you tuned on': scenarios/c15-transcript.md
+      - 'C16 · Ask for a number, not a yes': scenarios/c16-check.md
+      - 'C17 · Price a result that saw the holdout': scenarios/c17-peeked.md
+      - 'C18 · From seal to reuse: the holdout end to end': scenarios/c18-end-to-end.md
+      - 'C19 · When looking gains: the holdout comes from a changed world': scenarios/c19-changed-world.md
+      - 'C20 · When looking gains: too few training rows to choose': scenarios/c20-few-rows.md
+      - 'C21 · When looking hurts: tuning on the holdout score': scenarios/c21-looking-hurts.md
+      - 'C22 · When the world drifts: certify, refit, watch': scenarios/c22-drift-watch.md
+      - 'C23 · Which choices to tune on the holdout: the transport screen': scenarios/c23-transport-screen.md
   - Glossary: glossary.md
   - Manual:
       - Install: manual/install.md
       - Verdicts & refusal codes: manual/verdicts.md
       - 'What "exact" means': manual/exact.md
       - 'The sieve: parameters & vocabulary': manual/sieve.md
+      - 'Certificates & the book': manual/certificates.md
+      - 'Workflow map': manual/map.md
       - Data contracts: manual/contracts.md
       - Tests & guarantees: manual/tests.md
       - Road to 1.0.0: manual/roadmap.md

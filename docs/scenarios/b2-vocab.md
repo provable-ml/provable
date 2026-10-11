@@ -62,4 +62,4 @@ Same guarantee, either vocabulary: FDR at q = 0.10 over one selection-conditiona
 
 ---
 
-*What the papers add*: the toll theorems (honesty's cost bounded above and below), and the two-diagnoses result: lawful price vs. vocabulary failure, and how the instrument distinguishes them: Paper 2, [10.5281/zenodo.21819895](https://doi.org/10.5281/zenodo.21819895).
+*What the papers add*: the toll theorems (honesty's cost bounded above and below), and the two-diagnoses result: lawful price vs. vocabulary failure, and how the instrument distinguishes them: Paper 2, [SSRN 7247302](https://doi.org/10.2139/ssrn.7247302) (archived: [Zenodo 21819895](https://doi.org/10.5281/zenodo.21819895)).

@@ -1,0 +1,71 @@
+A1  P(the look hurts), gated at z_(delta/K) = 2.576 against the ungated argmax; delta 0.05, K 10, 200,000 replications
++-------------------------------------------+---------+-------------------------------+
+| world                                     |   gated |   argmax of the holdout gains |
+|-------------------------------------------+---------+-------------------------------|
+| all 10 candidates worse by 0.0 s.e.       |  0.0495 |                        0.9988 |
+| all 10 candidates worse by 0.1 s.e.       |  0.0365 |                        0.9980 |
+| all 10 candidates worse by 0.5 s.e.       |  0.0111 |                        0.9750 |
+| all 10 candidates worse by 1.0 s.e.       |  0.0017 |                        0.8233 |
+| one better by 3 s.e., 9 worse by 0.1 s.e. |  0.0151 |                        0.0829 |
++-------------------------------------------+---------+-------------------------------+
+A2  power to buy a gain carried by one unnamed candidate of 10; necessity: no delta-safe look exceeds Phi(theta - z_(delta/K)) for every candidate
++------------------------------+--------------+--------------------------------------+------------------------------------+-------------------------------------------+
+|   theta = gain sqrt(h)/sigma |   gated look |   minimax bound Phi(theta - z_(d/K)) |   gate lower bound (bound - delta) |   single named candidate Phi(theta - z_d) |
+|------------------------------+--------------+--------------------------------------+------------------------------------+-------------------------------------------|
+|                       2.0000 |       0.2783 |                               0.2824 |                             0.2324 |                                    0.6388 |
+|                       3.0000 |       0.6597 |                               0.6643 |                             0.6143 |                                    0.9123 |
+|                       4.0000 |       0.9185 |                               0.9228 |                             0.8728 |                                    0.9907 |
+|                       5.0000 |       0.9918 |                               0.9923 |                             0.9423 |                                    0.9996 |
++------------------------------+--------------+--------------------------------------+------------------------------------+-------------------------------------------+
+    rows to buy a gain with probability 0.8 from a menu of 10, relative to one named candidate: 1.889
+A3  expected harm of the gated look, in standard errors of the paired gain: bound K max_t t Phibar(z_(delta/K) + t): K=1 0.0082, K=10 0.0061; worst case with all K independent candidates worse by t: K=1 0.0082, K=10 0.0060
+B   nothing left to find: 200 features of which 5 carry 0.5, 400 training rows, 1,000 holdout rows; the default (cross-validation over the top-k fits) holds all five signal features in 60 of 60 worlds; seeds 5000..5059
++-------------------------------------------+-----------------+-----------------------------+----------------+-----------------+
+| route                                     |   mean live MSE |   live cost against no look |   worlds worse |   worlds better |
+|-------------------------------------------+-----------------+-----------------------------+----------------+-----------------|
+| no look                                   |          1.0207 |                      0.0000 |              0 |               0 |
+| no price                                  |          1.0855 |                      0.0647 |             60 |               0 |
+| ask                                       |          1.0271 |                      0.0063 |             59 |               1 |
+| gated                                     |          1.0207 |                      0.0000 |              1 |               0 |
+| best candidate (default plus one feature) |          1.0205 |                     -0.0003 |                |                 |
++-------------------------------------------+-----------------+-----------------------------+----------------+-----------------+
++--------------------------------------------------------------+------------------------+-------------------+-------------------+------------------------+------------------------+
+| ungated route                                                |   noise features tried |   kept, predicted |   kept, simulated |   live cost, predicted |   live cost, simulated |
+|--------------------------------------------------------------+------------------------+-------------------+-------------------+------------------------+------------------------|
+| no price: eta 0, all 1,000 rows, every remaining feature     |               194.6333 |           55.6901 |           52.4500 |                 0.0641 |                 0.0647 |
+| through ask: eta 1, 800 tuning rows, until the slice retires |                95.6667 |            5.9141 |            6.3167 |                 0.0069 |                 0.0063 |
++--------------------------------------------------------------+------------------------+-------------------+-------------------+------------------------+------------------------+
+C2  gated look (each candidate against the default, Bonferroni at delta 0.05, on the first 800 holdout rows), 60 worlds, seeds 3000..3059; menu of 29
++----------------------------+-----------------+-----------------+----------------+-------------------------+
+| route                      |   mean live MSE |   worlds better |   worlds worse |   worlds the gate moved |
+|----------------------------+-----------------+-----------------+----------------+-------------------------|
+| no look (cross-validation) |          1.0449 |               0 |              0 |                       0 |
+| gated look                 |          1.0321 |              17 |              0 |                      17 |
+| best candidate             |          1.0212 |                 |                |                         |
++----------------------------+-----------------+-----------------+----------------+-------------------------+
+C3  gated look under the changed law (x1 coefficient -0.6 in training, +0.6 in the holdout and live), on the first 800 holdout rows, 40 worlds, seeds 2000..2039; menu of 5 against the default
++----------------------------+-------------------+-----------------+----------------+
+| route                      |   mean live Brier |   worlds better |   worlds worse |
+|----------------------------+-------------------+-----------------+----------------|
+| no look (cross-validation) |            0.2558 |               0 |              0 |
+| gated look                 |            0.1969 |              40 |              0 |
+| best candidate             |            0.1969 |                 |                |
++----------------------------+-------------------+-----------------+----------------+
+    gated picks: {'logit x0': 40}
+D   recency premium of a look at the last M_H blocks for a decision 1 block after the holdout; block effect with sd 1.0 (stationary AR(1)) or increment sd 1.0 (random walk from 0), B training blocks, 400,000 paths each
++--------------------+--------+-----+-------+--------------------------------+-----------+-----------------------------------------+
+| effect             |    rho |   B |   M_H |   value of the look, simulated |   formula |   sd of the drift to the decision block |
+|--------------------+--------+-----+-------+--------------------------------+-----------+-----------------------------------------|
+| AR(1)              | 0.0000 |  50 |     1 |                         0.0000 |    0.0000 |                                  1.0000 |
+| AR(1)              | 0.0000 |  50 |     4 |                         0.0000 |    0.0000 |                                  1.0000 |
+| AR(1)              | 0.3000 |  50 |     1 |                         0.0839 |    0.0838 |                                  0.9539 |
+| AR(1)              | 0.3000 |  50 |     4 |                         0.1176 |    0.1187 |                                  0.9539 |
+| AR(1)              | 0.6000 |  50 |     1 |                         0.0968 |    0.0957 |                                  0.8000 |
+| AR(1)              | 0.6000 |  50 |     4 |                         0.2101 |    0.2083 |                                  0.8000 |
+| AR(1)              | 0.9000 |  50 |     1 |                         0.0362 |    0.0359 |                                  0.4359 |
+| AR(1)              | 0.9000 |  50 |     4 |                         0.1234 |    0.1235 |                                  0.4359 |
+| random walk from 0 | 1.0000 |  10 |     1 |                         0.0617 |    0.0616 |                                  1.0000 |
+| random walk from 0 | 1.0000 |  10 |     4 |                         0.2302 |    0.2311 |                                  1.0000 |
+| random walk from 0 | 1.0000 |  50 |     1 |                         0.0275 |    0.0281 |                                  1.0000 |
+| random walk from 0 | 1.0000 |  50 |     4 |                         0.1105 |    0.1107 |                                  1.0000 |
++--------------------+--------+-----+-------+--------------------------------+-----------+-----------------------------------------+

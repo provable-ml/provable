@@ -6,12 +6,20 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.10", "3.11", "3.12", "3.13"]
+        python-version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
+        pins: [""]
+        include:
+          - python-version: "3.10"
+            pins: "numpy==1.26.4 pandas==2.2.3 scipy==1.13.1 scikit-learn==1.5.2 statsmodels==0.14.4 xgboost==2.0.3"
+          - python-version: "3.10"
+            pins: "numpy==1.26.4 pandas==2.2.3 xgboost==2.1.4"
+          - python-version: "3.10"
+            pins: "numpy==1.26.4 pandas==2.2.3 xgboost==3.0.5"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-      - run: pip install -e . -e ./verify pytest
+      - run: pip install -e . -e ./verify pytest ${{ matrix.pins }}
       - run: python -m pytest -q
       - run: python tests/selftest.py | tee selftest.out && grep -q "17/17 PASS" selftest.out

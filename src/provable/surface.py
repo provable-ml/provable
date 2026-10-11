@@ -70,7 +70,7 @@ def audit(model_path, policy, X, out_dir=None):
     return _emit(bundle, out_dir)
 
 
-def enforce(model_path, policy, X_train, X_holdout, out_path, y_holdout=None, out_dir=None, probe_contexts=200, seed=0):
+def enforce(model_path, policy, X_train, X_holdout, out_path, y_holdout=None, out_dir=None, probe_contexts=200, seed=0, *, probe_memory_budget_mb=None):
     ad, spec = load(model_path)
     fams, refusals = _families(spec, policy)
     X_train = np.asarray(X_train, dtype=np.float64); X_holdout = np.asarray(X_holdout, dtype=np.float64)
@@ -102,9 +102,14 @@ def enforce(model_path, policy, X_train, X_holdout, out_path, y_holdout=None, ou
         struct = max(struct, max((abs(c) for A, c in fam2.items() if A), default=0.0))
     th2 = ad2.thresholds()
     ctx = Spectrum.grid_contexts(th2, ad2.num_feature, probe_contexts, seed)
+    probe_chunk = None
+    if probe_memory_budget_mb is not None:
+        worst = max((max(len(th2.get(cl['i'], [])) + 1, 1) * max(len(th2.get(cl['j'], [])) + 1, 1) for cl, _, _ in fams if cl['kind'] == 'between'), default=1)
+        probe_chunk = max(1, int(float(probe_memory_budget_mb) * 1e6 / (8.0 * max(ad2.num_feature, 1)) / worst))
+        print(f"[probe] memory budget {probe_memory_budget_mb} MB -> {probe_chunk} context(s) per chunk at worst grid {worst} cells")
     probe = 0.0
     for cl, _, _ in fams:
-        if cl['kind'] == 'between': probe = max(probe, Spectrum.grid_probe(ad2.predict_margin, th2.get(cl['i'], []), th2.get(cl['j'], []), cl['i'], cl['j'], ctx))
+        if cl['kind'] == 'between': probe = max(probe, Spectrum.grid_probe(ad2.predict_margin, th2.get(cl['i'], []), th2.get(cl['j'], []), cl['i'], cl['j'], ctx, tol_context=probe_chunk))
     realized = float(np.mean((F_ho - G_ho) ** 2))
     dsq = (F_ho - G_ho) ** 2
     if y_holdout is not None:

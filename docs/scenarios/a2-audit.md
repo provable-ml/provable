@@ -28,6 +28,8 @@ between(tenure, util): atoms=1466  data_mass=0.0077  share_of_var=7.16%  peak: t
 
 ## Reading it
 
+`data_mass` is the removal cost: what excising the matched family would cost the model on this sample, quoted exactly and before any edit.
+
 The verdict grammar is a closed set (`PASS`, `FINDINGS`, `DECLINED`), and here it is **FINDINGS**: the artifact contains rules matching both forbidden clauses, quantified and located.
 
 **`between(age, group_A)`**: 326 atoms jointly conditioning on both features, with exact removal price (`data_mass`) 0.1755 on this sample, peaking at the `age>=34.8` threshold. That is the planted pattern, found where it was planted.
@@ -47,4 +49,4 @@ Presence/absence and exact mass of the named rule families in this artifact on t
 
 ---
 
-*What the papers add*: the family calculus, the policy algebra, and what no audit of a trained model can ever tell you (the wall: mediation, confounding, deployment shift, the model's own training bias): Paper 1, [10.5281/zenodo.21819690](https://doi.org/10.5281/zenodo.21819690).
+*What the papers add*: the family calculus, the policy algebra, and what no audit of a trained model can ever tell you (the wall: mediation, confounding, deployment shift, the model's own training bias): Paper 1, [SSRN 7247278](https://doi.org/10.2139/ssrn.7247278) (archived: [Zenodo 21819690](https://doi.org/10.5281/zenodo.21819690)).

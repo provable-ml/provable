@@ -73,4 +73,4 @@ The ledger's `legible` entry inherits the claim ledger's FDR control; the split 
 
 ---
 
-*What the papers add*: Paper 3 is this page as theory, with the dark-mass ceiling formula (how much true signal *could* hide from every scan, a sharp threshold in one number), the unmeasured-variable shadow forecast (calibrated to 0.02 AUC in the graded test), and where hidden structure lives: [10.5281/zenodo.21819925](https://doi.org/10.5281/zenodo.21819925). The toll bounds quoted by the phase line are Paper 2's: [10.5281/zenodo.21819895](https://doi.org/10.5281/zenodo.21819895).
+*What the papers add*: Paper 3 is this page as theory, with the dark-mass ceiling formula (how much true signal *could* hide from every scan, a sharp threshold in one number), the unmeasured-variable shadow forecast (calibrated to 0.02 AUC in the graded test), and where hidden structure lives: [SSRN 7247305](https://doi.org/10.2139/ssrn.7247305) (archived: [Zenodo 21819925](https://doi.org/10.5281/zenodo.21819925)). The toll bounds quoted by the phase line are Paper 2's: [SSRN 7247302](https://doi.org/10.2139/ssrn.7247302) (archived: [Zenodo 21819895](https://doi.org/10.5281/zenodo.21819895)).

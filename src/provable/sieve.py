@@ -288,6 +288,7 @@ class CertifiedDiscovery:
         for k, (a, b) in enumerate(pairs): Bc[:, k] = Bb[:, a] & Bb[:, b]
         Full = np.concatenate([Bb, Bc], axis=1)
         names = [s['name'] for s in base] + [f"({base[a]['name']})&({base[b]['name']})" for a, b in pairs]
+        specs = [dict(s) for s in base] + [dict(kind='conj', parts=(dict(base[a]), dict(base[b])), name=f"({base[a]['name']})&({base[b]['name']})", src='conj') for a, b in pairs]
         srcs = [s['src'] for s in base] + ['conj'] * len(pairs)
         depth = [0] * len(base) + [1] * len(pairs)
         pt = Full[tr].mean(0)
@@ -306,6 +307,7 @@ class CertifiedDiscovery:
         colv = Full[np.ix_(tr, kept)].astype(np.float32)
         self._mu, self._sd = colv.mean(0), colv.std(0)
         self.atom_names_ = [names[j] for j in kept]
+        self.atom_spec_ = [specs[j] for j in kept]
         self.atom_src_ = np.array([srcs[j] for j in kept])
         self.atom_depth_ = np.array([depth[j] for j in kept])
         self.dict_counts_ = {s: int((self.atom_src_ == s).sum()) for s in ['guideline', 'cut', 'cart', 'onehot', 'harvest'] + (['path'] if self.n_path_harvest > 0 else []) + ['conj']}
@@ -557,7 +559,7 @@ class CertifiedDiscovery:
                    ('frame-blind margin sign (spotlight, plug-in)', 'cert ahead of ridge*' if M_C > 0 else 'cert behind ridge*', f'ridge* - cert = {gaps["fb_margin_obs"]:.3g}', 'consistent' if (M_C > 0) == (gaps['fb_margin_obs'] > 0) else 'inconsistent')]
         var_te = float(np.var(self.y[self.idx_test]))
         ledger = dict(var_y_test=var_te, legible_certified=var_te - m['cert'], dark_visible_to_engine=m['cert'] - m['xgb'], noise_plus_dark_to_both=m['xgb'])
-        self.diag_ = dict(P=P, zbar_pool=zbar_pool, tbonf=tbonf, zbar_core=zbar_core, z_k=z_k, bands=bands, penumbra_score=penumbra, penumbra_perobs=penumbra * conv, sigma2n=sigma2n, sr_train=sr, max_scan=float(at.max()), stationary_entry=bool(at.max() < self.entry_t), stationary_bar=bool(at.max() < zbar_pool), min_cert_t=min_c, med_cert_t=float(np.median(tc)) if k else np.nan, max_cert_t=float(tc.max()) if k else np.nan, N3_hat=N3_hat, Mb=Mb, Md=Md, M=M, s_cfg=s_cfg, F=Ffront, Rct=Rct, M_C=M_C, M_C_perobs=M_C * conv, ridge_bench=ridge_bench, phi_spot=phi_spot, dividend=tbonf ** 2 - 1, harvest_term=M ** 2 / (M + P) if M + P > 0 else 0.0, toll_up=toll_up, toll_lo=toll_lo, kd=kd, conv=conv, gaps=gaps, phase=phase, pv_rows=pv_rows, ledger=ledger)
+        self.diag_ = dict(scan_t=[float(x) for x in t_scan], P=P, zbar_pool=zbar_pool, tbonf=tbonf, zbar_core=zbar_core, z_k=z_k, bands=bands, penumbra_score=penumbra, penumbra_perobs=penumbra * conv, sigma2n=sigma2n, sr_train=sr, max_scan=float(at.max()), stationary_entry=bool(at.max() < self.entry_t), stationary_bar=bool(at.max() < zbar_pool), min_cert_t=min_c, med_cert_t=float(np.median(tc)) if k else np.nan, max_cert_t=float(tc.max()) if k else np.nan, N3_hat=N3_hat, Mb=Mb, Md=Md, M=M, s_cfg=s_cfg, F=Ffront, Rct=Rct, M_C=M_C, M_C_perobs=M_C * conv, ridge_bench=ridge_bench, phi_spot=phi_spot, dividend=tbonf ** 2 - 1, harvest_term=M ** 2 / (M + P) if M + P > 0 else 0.0, toll_up=toll_up, toll_lo=toll_lo, kd=kd, conv=conv, gaps=gaps, phase=phase, pv_rows=pv_rows, ledger=ledger)
 
     # ------------------------------------------------------------------ stability
     def _stability(self):

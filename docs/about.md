@@ -35,7 +35,7 @@ VERIFICATION: PASS
 <div class="pv-label">Status</div>
 
 <ul class="pv-ledger">
-  <li><span class="pv-key" style="min-width:auto">pip install provable</span><span class="pv-leader"></span><span class="pv-val"><a href="../manual/install/">0.9.0</a></span></li>
+  <li><span class="pv-key" style="min-width:auto">pip install provable</span><span class="pv-leader"></span><span class="pv-val"><a href="../manual/install/">0.12</a></span></li>
   <li><span class="pv-key" style="min-width:auto">Source</span><span class="pv-leader"></span><span class="pv-val"><a href="https://github.com/provable-ml/provable">GitHub</a> &middot; <a href="https://pypi.org/project/provable/">PyPI</a></span></li>
   <li><span class="pv-key" style="min-width:auto">License</span><span class="pv-leader"></span><span class="pv-val"><a href="https://github.com/provable-ml/provable/blob/main/LICENSE">MIT License</a></span></li>
   <li><span class="pv-key" style="min-width:auto">Papers</span><span class="pv-leader"></span><span class="pv-val"><a href="../cite/">a trilogy of companion preprints</a></span></li>

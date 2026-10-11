@@ -69,4 +69,4 @@ Exactly what was guaranteed when k > 0: the FDR of the (empty) ledger. An empty 
 
 ---
 
-*What the papers add*: Paper 3 turns the empty list into a program: a hard bound on what could still be hiding, and a playbook that in the graded test converted zero findings into two at zero additional data cost: [10.5281/zenodo.21819925](https://doi.org/10.5281/zenodo.21819925).
+*What the papers add*: Paper 3 turns the empty list into a program: a hard bound on what could still be hiding, and a playbook that in the graded test converted zero findings into two at zero additional data cost: [SSRN 7247305](https://doi.org/10.2139/ssrn.7247305) (archived: [Zenodo 21819925](https://doi.org/10.5281/zenodo.21819925)).

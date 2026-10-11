@@ -21,7 +21,7 @@ LIMITS = [
     'Missing-value routing of ORIGINAL trees is not modeled by the transported spectrum; appended trees route NaN to the fail leaf. Audit assumes NaN-free inputs (R-07 declared).',
 ]
 
-REFUSAL_CODES = {'R-01': 'nothing certifiable at the agreed FDR budget (k = 0)', 'R-02': 'reserved certification split too small', 'R-03': 'expansion above exact-enumeration cap', 'R-04': 'pattern off the representable lattice', 'R-05': 'feature not present in the model', 'R-06': 'probe budget exceeded', 'R-07': 'missing values present; transported audit not defined', 'R-08': 'unsupported clause kind'}
+REFUSAL_CODES = {'R-01': 'nothing certifiable at the agreed FDR budget (k = 0)', 'R-02': 'reserved certification split too small', 'R-03': 'expansion above exact-enumeration cap', 'R-04': 'pattern off the representable lattice', 'R-05': 'feature not present in the model', 'R-06': 'probe budget exceeded', 'R-07': 'missing values present; transported audit not defined', 'R-08': 'unsupported clause kind', 'R-09': 'objective link unmapped; transported constant would be wrong'}
 
 
 def canonical(obj): return json.dumps(obj, sort_keys=True, separators=(',', ':'), default=_num)
@@ -56,7 +56,7 @@ def render_text(bundle):
     if bundle['findings']:
         L.append('FINDINGS')
         for f in bundle['findings']:
-            L.append(f"  clause {f['clause']}: atoms={f['n_atoms']}  data_mass#exact={f['data_mass']:.6g}  share_of_var={f['share_of_var']:.4f}")
+            L.append(f"  clause {f['clause']}: atoms={f['n_atoms']}  data_mass (removal cost)#exact={f['data_mass']:.6g}  share_of_var={f['share_of_var']:.4f}")
             if f.get('profile_top'): L.append('    where: ' + ', '.join(f"{t}" for t in f['profile_top']))
     a = bundle.get('action') or {}
     if a:
@@ -90,7 +90,7 @@ def render_markdown(bundle):
          '| Establishes | Does not establish |', '|---|---|',
          f"| {_esc(v.get('establishes', 'see findings'))} | proxies; fairness of outcomes; causal effects; off-distribution behavior |", '']
     if bundle['findings']:
-        L += ['## Findings', '', '| clause | atoms | data mass `#exact` | share of model var | where |', '|---|---|---|---|---|']
+        L += ['## Findings', '', '| clause | atoms | data mass (removal cost) `#exact` | share of model var | where |', '|---|---|---|---|---|']
         for f in bundle['findings']:
             L.append(f"| {_esc(f['clause'])} | {f['n_atoms']} | {f['data_mass']:.6g} | {f['share_of_var']:.4f} | {_esc(', '.join(f.get('profile_top', [])) or '—')} |")
         L.append('')

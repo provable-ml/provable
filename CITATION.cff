@@ -5,8 +5,12 @@ title: "provable: Exact audit, surgery, and certified discovery for tree ensembl
 authors:
   - family-names: "Souihli"
     given-names: "Oussama"
-version: 0.9.0
-doi: "10.5281/zenodo.21819947"
+version: 0.12.0rc1
+date-released: 2026-10-10
+identifiers:
+  - type: doi
+    value: "10.5281/zenodo.21819947"
+    description: "provable 0.9.0, the archived version that reproduces every number in the papers"
 license: MIT
 url: "https://provable.ml"
 repository-code: "https://github.com/provable-ml/provable"

@@ -104,4 +104,4 @@ The FDR of the three-claim ledger at q = 0.10, controlled by BH over one selecti
 
 ---
 
-*What the papers add*: Paper 3 is the theory of this page's second half: why a procedure misses (search effort, data shortage, or geometry), what each miss would cost in rows to buy back (the naive quote overprices ~3×), and which misses can never be bought at any budget: [10.5281/zenodo.21819925](https://doi.org/10.5281/zenodo.21819925).
+*What the papers add*: Paper 3 is the theory of this page's second half: why a procedure misses (search effort, data shortage, or geometry), what each miss would cost in rows to buy back (the naive quote overprices ~3×), and which misses can never be bought at any budget: [SSRN 7247305](https://doi.org/10.2139/ssrn.7247305) (archived: [Zenodo 21819925](https://doi.org/10.5281/zenodo.21819925)).

@@ -1,6 +1,15 @@
-# A1 · What is this model actually using?
+# A1 · Examine: what is this model actually using?
 
-You have a trained XGBoost model, perhaps one you didn't train. Feature-importance plots give you rankings; SHAP gives you sampled attributions. Neither tells you *the rules*: which exact conjunctions of thresholds the model fires, with what weights. `provable` reads that list, the [atom spectrum](../glossary.md#atoms), from the model file, exactly, with no sampling.
+You have a trained XGBoost model, perhaps one you didn't train. Feature-importance plots give you rankings; SHAP gives you sampled attributions. Neither tells you *the rules*: which exact conjunctions of thresholds the model fires, with what weights. `provable` reads that list, the [atom spectrum](../glossary.md#atoms), from the model file, exactly, with no sampling. From 0.10.0 the one-call form is `provable.examine(model, X)`, which returns the same anatomy this page builds by hand:
+
+```python
+ana = pv.examine('model.json', X_val)
+print(ana.describe())        # model summary, link space handled
+top = ana.spectrum.families(X_val)[:5]        # ranked by removal cost
+ana.spectrum.describe_family(top[0], X_val)   # magnitude, removal cost, share, joint value
+```
+
+`examine` wraps the spectrum you are about to build, plus the family enumeration, group rollups, and the transport share, in one object; every number in it is the same `#exact` arithmetic as below.
 
 This is the running example the other A-scenarios continue: a small credit-style dataset with a pattern deliberately planted in the world (applicants under 35 in `group_A` are penalized) and a stock `XGBRegressor` trained on it.
 
@@ -79,4 +88,4 @@ The spectrum is an identity of the artifact, tagged [`#exact`](../glossary.md#ex
 
 ---
 
-*What the papers add*: the transport theorem behind this listing (leaf boxes → telescoped threshold atoms) and the calculus built on it: *Every Interaction Has a Price: An Exact Calculus for Tree Ensembles* (2026), [10.5281/zenodo.21819690](https://doi.org/10.5281/zenodo.21819690).
+*What the papers add*: the transport theorem behind this listing (leaf boxes → telescoped threshold atoms) and the calculus built on it: *Every Interaction Has a Price: An Exact Calculus for Tree Ensembles* (2026), [SSRN 7247278](https://doi.org/10.2139/ssrn.7247278) (archived: [Zenodo 21819690](https://doi.org/10.5281/zenodo.21819690)).

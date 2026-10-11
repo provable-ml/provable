@@ -62,4 +62,4 @@ That the certificate you were handed describes the model file you were handed, a
 
 ---
 
-*What the papers add*: the certificate schema, the threat model, and the recheck protocol: Paper 1, [10.5281/zenodo.21819690](https://doi.org/10.5281/zenodo.21819690).
+*What the papers add*: the certificate schema, the threat model, and the recheck protocol: Paper 1, [SSRN 7247278](https://doi.org/10.2139/ssrn.7247278) (archived: [Zenodo 21819690](https://doi.org/10.5281/zenodo.21819690)).

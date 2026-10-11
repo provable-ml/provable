@@ -13,7 +13,7 @@ so the whole artifact equals `base_score + Σ coef · AND_f 1[x_f >= t_f]`: a fi
 | load / parse | native JSON → leaf boxes (interval constraints per feature); base_score parsed to the empty atom | `adapters_xgb` |
 | transport | boxes → signed threshold atoms; guarded by `max_atoms` (R-03 above it) | `calculus.Spectrum` |
 | audit | family selection (`between`, `involving`) → exact data mass, share of model variance, per-threshold profile | `surface.audit` |
-| price | excision price = mean squared removed component on the sample (`#exact`), quoted **before** the edit | `calculus.data_mass` |
+| price | excision price = mean squared removed component on the sample (`#exact`) -- the removal cost -- quoted **before** the edit | `calculus.data_mass` |
 | enforce | one appended chain-tree per removed atom (−coef on the conjunction, 0 elsewhere); off-rule rows **bit-identical** by construction | `adapters_xgb.append_rules` |
 | structural probe | re-transport the edited file; max residual forbidden coefficient | `surface.enforce` + verifier check 4 |
 | behavioral probe | consecutive-cell second differences over the full (i, j) threshold grid at probe contexts; zero everywhere ⇔ no i×j interaction at the artifact's own resolution | `calculus.grid_probe` + verifier check 5 |
