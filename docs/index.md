@@ -28,29 +28,6 @@ You have raw `X, y` and want findings you can stand behind.
 | The effect lives on the *low* side, or in an *interior band*. Can the claim say so? | [B2 · Vocabulary](scenarios/b2-vocab.md) |
 | The run came back empty. Is "nothing found" informative? | [B3 · Refusal](scenarios/b3-refusal.md) |
 | The certified model trails XGBoost. Is that the price of honesty, or a fixable gap? | [B4 · Dark mass](scenarios/b4-darkmass.md) |
-- **"I ran a study; make the claim citable."** -> [C1](scenarios/c1-certify.md)
-- **"Can I use this certificate again?"** -> [C2](scenarios/c2-reuse.md)
-- **"What does my book of claims guarantee?"** -> [C3](scenarios/c3-book.md)
-- **"Price what that old pipeline did."** -> [C4](scenarios/c4-lint.md)
-- **"Did it work?"** -> [C5](scenarios/c5-grade.md)
-- **"Show me on a real public dataset."** -> [C6](scenarios/c6-titanic.md)
-- **"More rows won't help; what column would?"** -> [C7](scenarios/c7-purchase.md)
-- **"What is my model still getting wrong, kept as a record?"** -> [C8](scenarios/c8-shadow.md)
-- **"Interrogate the thing I cannot name."** -> [C9](scenarios/c9-characterize.md)
-- **"A vendor claims to have the column. Test the claim first."** -> [C10](scenarios/c10-screen.md)
-- **"Build everything the archive can hold, and see how fast."** -> [C11](scenarios/c11-alternate.md)
-- **"Several priced columns, one requirement. In which order, and when to stop?"** -> [C12](scenarios/c12-pursue.md)
-- **"Forty columns I own, five that matter. Find them, and see why stepwise cannot."** -> [C13](scenarios/c13-select.md)
-- **"I want to look at the holdout while I tune. What does it cost?"** -> [C14](scenarios/c14-seal.md)
-- **"No exam slice. Can I certify on the rows I tuned on?"** -> [C15](scenarios/c15-transcript.md)
-- **"I need a number from the holdout, not a yes or no."** -> [C16](scenarios/c16-check.md)
-- **"That result saw the holdout. What is it still worth?"** -> [C17](scenarios/c17-peeked.md)
-- **"How is the holdout meant to be used, from the seal to reuse?"** -> [C18](scenarios/c18-end-to-end.md)
-- **"The world changed after my training rows. Does looking at the holdout buy a better model?"** -> [C19](scenarios/c19-changed-world.md)
-- **"Too few training rows to choose among my candidates. Does looking at the holdout help, and what does it cost?"** -> [C20](scenarios/c20-few-rows.md)
-- **"I kept every feature that improved the holdout score. Is the model better?"** -> [C21](scenarios/c21-looking-hurts.md)
-- **"My model is certified and deployed, and the world drifts. When does the certificate stop describing it?"** -> [C22](scenarios/c22-drift-watch.md)
-- **"This choice helps in some weeks and hurts in others. Can I tune it on the holdout?"** -> [C23](scenarios/c23-transport-screen.md)
 | When a claim certifies, is it the right feature, or a near-duplicate standing in? | Stability tiers, in [A→B · Bridge](scenarios/bridge.md) and [B1](scenarios/b1-claims.md) |
 
 ## The bridge
@@ -58,6 +35,36 @@ You have raw `X, y` and want findings you can stand behind.
 | The question | Where it's answered |
 |---|---|
 | The audit found a pattern in my model. Is it in the world, or just in the model? | [A→B · Bridge](scenarios/bridge.md) |
+
+## Workflow C · certify a claim
+
+You want a claim others can check, the next column worth buying, and a holdout you can look at without fooling yourself.
+
+| The question | Where it's answered |
+|---|---|
+| I ran a study; make the claim citable. | [C1 · Certify](scenarios/c1-certify.md) |
+| Can I use this certificate again? | [C2 · Reuse](scenarios/c2-reuse.md) |
+| What does my book of claims guarantee? | [C3 · Book](scenarios/c3-book.md) |
+| Price what that old pipeline did. | [C4 · Lint](scenarios/c4-lint.md) |
+| Did it work? | [C5 · Grade](scenarios/c5-grade.md) |
+| Show me on a real public dataset. | [C6 · Titanic](scenarios/c6-titanic.md) |
+| More rows won't help; what column would? | [C7 · Purchase](scenarios/c7-purchase.md) |
+| What is my model still getting wrong, kept as a record? | [C8 · Shadow](scenarios/c8-shadow.md) |
+| Interrogate the thing I cannot name. | [C9 · Characterize](scenarios/c9-characterize.md) |
+| A vendor claims to have the column. Test the claim first. | [C10 · Screen](scenarios/c10-screen.md) |
+| Build everything the archive can hold, and see how fast. | [C11 · Alternate](scenarios/c11-alternate.md) |
+| Several priced columns, one requirement. In which order, and when to stop? | [C12 · Pursue](scenarios/c12-pursue.md) |
+| Forty columns I own, five that matter. Find them, and see why stepwise cannot. | [C13 · Select](scenarios/c13-select.md) |
+| I want to look at the holdout while I tune. What does it cost? | [C14 · Seal](scenarios/c14-seal.md) |
+| No exam slice. Can I certify on the rows I tuned on? | [C15 · Transcript](scenarios/c15-transcript.md) |
+| I need a number from the holdout, not a yes or no. | [C16 · Check](scenarios/c16-check.md) |
+| That result saw the holdout. What is it still worth? | [C17 · Peeked](scenarios/c17-peeked.md) |
+| How is the holdout meant to be used, from the seal to reuse? | [C18 · End to end](scenarios/c18-end-to-end.md) |
+| The world changed after my training rows. Does looking at the holdout buy a better model? | [C19 · Changed world](scenarios/c19-changed-world.md) |
+| Too few training rows to choose among my candidates. Does looking at the holdout help, and what does it cost? | [C20 · Few rows](scenarios/c20-few-rows.md) |
+| I kept every feature that improved the holdout score. Is the model better? | [C21 · Looking hurts](scenarios/c21-looking-hurts.md) |
+| My model is certified and deployed, and the world drifts. When does the certificate stop describing it? | [C22 · Drift watch](scenarios/c22-drift-watch.md) |
+| This choice helps in some weeks and hurts in others. Can I tune it on the holdout? | [C23 · Transport screen](scenarios/c23-transport-screen.md) |
 
 ## Questions the papers answer
 
