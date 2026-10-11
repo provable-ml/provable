@@ -5,8 +5,8 @@ title: "provable: Exact audit, surgery, and certified discovery for tree ensembl
 authors:
   - family-names: "Souihli"
     given-names: "Oussama"
-version: 0.12.0rc1
-date-released: 2026-10-10
+version: 0.12.0
+date-released: 2026-10-11
 identifiers:
   - type: doi
     value: "10.5281/zenodo.21819947"

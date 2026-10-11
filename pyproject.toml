@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "provable"
-version = "0.12.0rc1"
+version = "0.12.0"
 description = "Exact audit, surgery, certified discovery, and the certificate layer for tree ensembles"
 readme = "README.md"
 license = "MIT"

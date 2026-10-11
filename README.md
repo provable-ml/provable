@@ -299,7 +299,7 @@ python tests/selftest.py          # T1-T7 acceptance ledger (17/17)
 | Suite | Locks |
 |---|---|
 | `test_contracts.py` | the identities certificates stand on: transport == stock margin across model shapes (depth 1–6, incl. single-split and constant models), float32 boundary routing at exact thresholds, base_score paths, append-tree on/off semantics |
-| `test_protocol.py` | refusal codes (R-05, coded R-07), policy canonicalization, order-free bundle hashing, any-single-field mutation breaks the certificate id, limits always present and rendered, verdict grammar closed set, sieve determinism per seed; v0.2 vocabulary: flags-off schema stability, deterministic low-side (\u2264) claim recovery with the extended dictionary |
+| `test_protocol.py` | refusal codes (R-05, coded R-07), policy canonicalization, order-free bundle hashing, any-single-field mutation breaks the certificate id, limits always present and rendered, verdict grammar closed set, sieve determinism per seed; v0.2 vocabulary: flags-off schema stability, deterministic low-side (≤) claim recovery with the extended dictionary |
 | `test_verifier_mutations.py` | each of the verifier's seven checks individually killed by a targeted tamper, incl. a resurrected-interaction attack with an attacker-re-hashed bundle |
 | `selftest.py` | end-to-end: external artifact → audit → enforce → stock reload → independent verify → mutation → discover → refusal |
 | `test_twin_suite.py` | the certificate layer, one lock per stated property (173 locks): lineage and the book, certify and grade, the mediated holdout and its bits, the watch, the route; each lock prints the value it measured |

@@ -531,7 +531,7 @@ def _unit_pipeline(rows, var_e, cid, clock_step, atoms, level, lags, periods, ho
         blk = _family_block("temporal (own lags)", np.column_stack(Ls), Llab, e_r, n, cid, level, False, span)
         if blk:
             fams.append(blk)
-    wd = pd.get_dummies(pd.to_datetime(rows["clock"]).dt.dayofweek, dtype=float)
+    wd = pd.get_dummies(pd.to_datetime(rows["clock"]).dt.day_of_week, dtype=float)
     Clab = [f"weekday {int(c)}" for c in wd.columns]
     wdM = wd.to_numpy()
     if len(holidays):

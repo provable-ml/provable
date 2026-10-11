@@ -14,4 +14,4 @@ from .loop import alternate, pursue, select, Alternation, Pursuit, Selection
 from .holdout import seal, Holdout, Answer, Release, HoldoutAudit, HoldoutTranscript
 from .monitor import watch, Watch, WatchState, WatchAudit
 from .transport import route, Routing
-__version__ = '0.12.0rc1'
+__version__ = '0.12.0'
