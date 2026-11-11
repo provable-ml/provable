@@ -17,3 +17,5 @@ tests/dossier_enforce/
 
 # mkdocs build output
 site/
+
+.idea/
