@@ -33,7 +33,11 @@ an Instrument, its Limits, and its Laws' (2026) as a single practical tool:
               cross-instrument pedigree, not recomputed here.
 
 Claims are quoted from the single S2 pass over the forward core (selection-conditional);
-the halo asserts nothing at atom level. Binary y runs as a linear probability model
+the halo asserts nothing at atom level. The forward core is conditioned on S1 only, so
+before the S2 pass it is reduced to a basis on S2: a member that is constant on S2, or an
+exact combination of the intercept and earlier members there, has no identified partial
+effect, is dropped untested and is reported (cert_basis_tol). A core of full column rank
+on S2 is passed through unchanged. Binary y runs as a linear probability model
 (the paper's Adult convention): MSE/Brier is the primary metric, AUC is also reported.
 NaN in raw features evaluates every predicate to False. Splits and every stochastic
 step are seeded (house conventions: split rng 4000+seed, replicates 31000+b, engine
@@ -60,7 +64,7 @@ from plotly.subplots import make_subplots
 class CertifiedDiscovery:
     """One object = one run of the instrument plus its baselines and diagnostics on a dataset."""
 
-    def __init__(self, fdr_q=0.10, rounds=4, damping=0.5, entry_t=2.0, entry_cap=300, core_cap=120, core_tmin=1.0, union_ridge=1.0, guard_v=1e-3, n_cuts=8, forced_cuts=None, cart_cuts=True, cart_depth=3, cart_leaf_frac=0.015, max_onehot=12, n_harvest=40, interactions=True, n_parents=12, n_children=30, conj_shadow=0.9, prune_support=0.005, prune_dup_r=0.98, halo='auto', halo_u=2.0, halo_dof_frac=0.02, refit_scope='train', test_frac=0.25, s2_frac=0.5, stability_reps=0, family_r=0.6, invariant_freq=0.9, xgb_params=None, seed=0, verbose=True, le_cuts=False, band_conj=False, n_path_harvest=0, path_depth=3, path_per_set=3, core_dedup_r=None):
+    def __init__(self, fdr_q=0.10, rounds=4, damping=0.5, entry_t=2.0, entry_cap=300, core_cap=120, core_tmin=1.0, union_ridge=1.0, guard_v=1e-3, n_cuts=8, forced_cuts=None, cart_cuts=True, cart_depth=3, cart_leaf_frac=0.015, max_onehot=12, n_harvest=40, interactions=True, n_parents=12, n_children=30, conj_shadow=0.9, prune_support=0.005, prune_dup_r=0.98, halo='auto', halo_u=2.0, halo_dof_frac=0.02, refit_scope='train', test_frac=0.25, s2_frac=0.5, stability_reps=0, family_r=0.6, invariant_freq=0.9, xgb_params=None, seed=0, verbose=True, le_cuts=False, band_conj=False, n_path_harvest=0, path_depth=3, path_per_set=3, core_dedup_r=None, *, cert_basis_tol=1e-6):
         self.fdr_q, self.rounds, self.damping = fdr_q, rounds, damping
         self.entry_t, self.entry_cap, self.core_cap, self.core_tmin = entry_t, entry_cap, core_cap, core_tmin
         self.union_ridge, self.guard_v = union_ridge, guard_v
@@ -98,6 +102,21 @@ class CertifiedDiscovery:
         #                  family). Without it, a densified vocabulary floods the core with
         #                  shadows whose S2 partial t's split and BH kills the whole family.
         self.le_cuts, self.band_conj, self.n_path_harvest, self.path_depth, self.path_per_set, self.core_dedup_r = le_cuts, band_conj, n_path_harvest, path_depth, path_per_set, core_dedup_r
+        # gate basis (on by default; None restores the unreduced S2 pass):
+        #   cert_basis_tol the partial-variance guard conditions the forward core on S1 only, so
+        #                  a member can be constant on S2, or an exact combination of the
+        #                  intercept and earlier members there: a <= twin whose tie rows all
+        #                  fell in S1, one-hots of a category whose remaining level fell in S1,
+        #                  two cuts with no S2 row between them. Such a member has no identified
+        #                  partial effect on S2 (the OLS would return a minimum-norm solution,
+        #                  and both members of a pair could pass the gate). Before the S2 pass,
+        #                  walking the core in admission order, a member is dropped when its
+        #                  norm after projection on the intercept and the kept members falls
+        #                  below this share of its own centered norm. A dropped member is not
+        #                  tested, the BH family is the kept core, and the drop is reported
+        #                  (cert_dropped_, core_full_). A core of full column rank on S2 is
+        #                  untouched: the run is byte-identical to the unreduced pass.
+        self.cert_basis_tol = cert_basis_tol
 
     # ------------------------------------------------------------------ statics
     @staticmethod
@@ -143,8 +162,9 @@ class CertifiedDiscovery:
         self._fit_engine()
         self._build_dictionary()
         self.union_, self.trace_ = self._sieve_run(self.idx_s1)
-        self.core_ = self._core_run(self.idx_s1, self.union_)
-        cert = self._certify_run(self.idx_s2, self.core_)
+        self.core_full_ = self._core_run(self.idx_s1, self.union_)
+        cert = self._certify_run(self.idx_s2, self.core_full_)
+        self.core_, self.cert_dropped_ = cert['core'], cert['dropped']
         self.certified_, self.khat_, self.core_res_, self.cert_sel_ = cert['certified'], cert['khat'], cert['res'], cert['sel']
         self.core_t_ = np.abs(np.asarray(self.core_res_.tvalues)[1:]) if self.core_res_ is not None else np.zeros(0)
         self._fit_cert_predictors()
@@ -386,8 +406,32 @@ class CertifiedDiscovery:
             if not placed: break
         return [union[j] for j in S]
 
+    def _basis_on(self, i2, core):
+        """Reduce the core to a basis on the rows i2 (see cert_basis_tol). Returns the kept
+        members in admission order and the drop ledger (atom, nearest kept member, their
+        correlation on i2, reason). X only: y is not read."""
+        if self.cert_basis_tol is None or not core: return list(core), []
+        tol = float(self.cert_basis_tol)
+        Z2 = self.Z[np.ix_(i2, np.array(core, int))].astype(np.float64)
+        mu = Z2.mean(0); Q = np.empty((len(core), len(i2))); k = 0
+        keep, dropped = [], []
+        for pos in range(len(core)):
+            v = Z2[:, pos] - mu[pos]; n0 = float(np.sqrt(v @ v))
+            if n0 <= tol * float(np.sqrt(Z2[:, pos] @ Z2[:, pos])):
+                dropped.append(dict(atom=int(core[pos]), partner=None, r=None, why='constant on S2')); continue
+            for _ in range(2):
+                if k: v -= (Q[:k] @ v) @ Q[:k]
+            n1 = float(np.sqrt(v @ v))
+            if n1 <= tol * n0:
+                Xk = Z2[:, keep] - mu[keep]; x = Z2[:, pos] - mu[pos]
+                rr = (Xk.T @ x) / (np.sqrt((Xk ** 2).sum(0)) * n0); jm = int(np.argmax(np.abs(rr)))
+                dropped.append(dict(atom=int(core[pos]), partner=int(core[keep[jm]]), r=float(rr[jm]), why='in span on S2')); continue
+            Q[k] = v / n1; k += 1; keep.append(pos)
+        return [core[pos] for pos in keep], dropped
+
     def _certify_run(self, i2, core):
-        out = dict(core=core, certified=[], khat=0, res=None, sel=np.zeros(len(core), bool))
+        core, dropped = self._basis_on(i2, core)
+        out = dict(core=core, dropped=dropped, certified=[], khat=0, res=None, sel=np.zeros(len(core), bool))
         if not core: return out
         Z2 = self.Z[np.ix_(i2, np.array(core, int))].astype(np.float64)
         res = sm.OLS(self.y[i2], sm.add_constant(Z2, has_constant='add')).fit()
@@ -609,6 +653,7 @@ class CertifiedDiscovery:
                 rows.append(row)
         self.claims_ = pd.DataFrame(rows).sort_values('p').reset_index(drop=True) if rows else pd.DataFrame()
         self.report_ = dict(setup=dict(n=len(self.y), n_s1=len(self.idx_s1), n_s2=len(self.idx_s2), n_test=len(self.idx_test), P=self.P_, dict_counts=self.dict_counts_, task='binary (LPM)' if self.binary_ else 'regression', seed=self.seed, refit_scope=self.refit_scope), trace=self.trace_, certification=dict(pool=self.P_, union=len(self.union_), core=len(self.core_), k=len(self.certified_), khat=self.khat_, q=self.fdr_q), performance=self.perf_, halo={k2: self.halo_[k2] for k2 in ('mode', 'reason', 'dof', 'lam', 'share', 'nsig')}, diagnostics=self.diag_, claims=self.claims_.to_dict('records'), stability=(dict(B=self.stab_['B'], sizes=self.stab_['sizes']) if self.stab_ else None), elapsed_s=self.elapsed_)
+        if self.cert_dropped_: self.report_['certification']['gate_basis'] = dict(core_in=len(self.core_full_), tested=len(self.core_), dropped=[dict(atom=self.atom_names_[dd['atom']], partner=(None if dd['partner'] is None else self.atom_names_[dd['partner']]), r=dd['r'], why=dd['why']) for dd in self.cert_dropped_])
 
     def _print_report(self):
         d, fmt = self.diag_, lambda v, nd=5: ('' if v is None else (f'{v:.{nd}f}' if isinstance(v, (int, float, np.floating)) and np.isfinite(v) else str(v)))
@@ -620,6 +665,9 @@ class CertifiedDiscovery:
         c = self.report_['certification']
         print('\n-- certification (one OLS pass on S2, BH q=%.2f over partial-t) --' % self.fdr_q)
         print(tabulate([[c['pool'], c['union'], c['core'], c['k'], fmt(self.entry_t, 1), fmt(self.core_tmin, 1), fmt(d['z_k'], 2), fmt(d['zbar_core'], 2), fmt(d['zbar_pool'], 2), fmt(d['tbonf'], 2), fmt(d['min_cert_t'], 2), fmt(d['med_cert_t'], 2), fmt(d['max_cert_t'], 2)]], headers=['P', 'union', 'core', 'k cert', 'entry', 'use bar', 'z(khat)', 'zbar core', 'zbar pool', 'sqrt2lnP', 'min|t|', 'med|t|', 'max|t|'], tablefmt='psql'))
+        if self.cert_dropped_:
+            print('gate basis: %d of %d core members dropped before the S2 pass (no identified partial effect on S2, not tested); BH family = %d' % (len(self.cert_dropped_), len(self.core_full_), len(self.core_)))
+            print(tabulate([[self.atom_names_[dd['atom']], ('' if dd['partner'] is None else self.atom_names_[dd['partner']]), fmt(dd['r'], 3), dd['why']] for dd in self.cert_dropped_], headers=['dropped', 'nearest kept member', 'r on S2', 'why'], tablefmt='psql'))
         if len(self.claims_):
             print('\n-- certified claims (S2 one-pass partial effects; raw predicate scale; top 15 by p) --')
             cl = self.claims_.head(15).copy()

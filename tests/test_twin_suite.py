@@ -59,7 +59,7 @@ def _panel(n=800, seed=0, signal=True):
 
 def _certify_pair():
     if "rep" not in _STATE:
-        X, y = _panel(seed=1)
+        X, y = _panel(n=2400, seed=1)
         led_dir = tempfile.mkdtemp(prefix="book_")
         rep = pv.certify(X, y, q=0.10, ledger=led_dir, profile="fast", seed=3, dataset_tag="synthetic")
         bare = pv.CertifiedDiscovery(fdr_q=0.10, seed=3, verbose=False, **PROFILES["fast"])

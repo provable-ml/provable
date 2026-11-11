@@ -136,6 +136,8 @@ MODEL VERIFICATION
           performance certificate kind; conditional certificate kind; the
           watch and the route; tail auto (an exact betting bound when the
           loss has a range)
+  0.12.1  the S2 gate tests a basis of the forward core: a member with no
+          identified partial effect on S2 is dropped untested and reported
 ==============================================================================
 ```
 
