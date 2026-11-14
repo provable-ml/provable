@@ -8,9 +8,10 @@ copyright: '&copy; 2026 Oussama Souihli, Dr. Eng. &middot; independent research 
 
 theme:
   name: material
+  custom_dir: overrides
   language: en
-  favicon: assets/favicon.svg
-  logo: assets/favicon.svg
+  favicon: assets/favicon.png
+  logo: assets/logo.webp
   font:
     text: STIX Two Text
     code: IBM Plex Mono

@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block tabs %}
+  {{ super() }}
+  {% if page and page.is_homepage %}
+    <div class="pv-frieze">
+      <img src="{{ 'assets/banner.webp' | url }}" width="2560" height="632" alt="Roman-style mosaic of an olive grove. One tree is missing from the floor. Its shadow remains." fetchpriority="high" decoding="async">
+    </div>
+  {% endif %}
+{% endblock %}

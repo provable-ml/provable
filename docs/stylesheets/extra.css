@@ -182,3 +182,22 @@ ul.pv-ledger { list-style: none; margin: 0; padding: 0; }
 }
 
 .md-copyright a { color: inherit; text-decoration: underline; }
+
+/* ---------- mark and frieze ---------- */
+.md-header__button.md-logo { padding: 0.2rem; margin: 0.15rem 0.3rem 0.15rem 0.2rem; }
+.md-header__button.md-logo img { display: block; width: 1.7rem; height: 1.7rem; }
+
+.pv-frieze {
+  line-height: 0;
+  background-color: #D8CBA8;
+  border-bottom: 1px solid var(--pv-rule);
+}
+.pv-frieze img {
+  display: block;
+  width: 100%;
+  height: auto;
+  min-height: 9rem;
+  max-height: 30rem;
+  object-fit: cover;
+  object-position: 46% 50%;
+}
